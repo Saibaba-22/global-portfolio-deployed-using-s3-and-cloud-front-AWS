@@ -82,6 +82,24 @@ jobs:
           --distribution-id $DISTRIBUTION_ID \
           --paths "/*"
 
+      # Show final URLs
+      - name: Show Deployment URLs
+        if: github.event_name == 'push' || github.event.inputs.action == 'apply'
+        run: |
+          echo "====================================="
+          echo "🚀 DEPLOYMENT COMPLETED"
+          echo "====================================="
+          echo "S3 Website URL:"
+          terraform output -raw s3_static_website_endpoint
+      
+          echo "CloudFront URL:"
+          terraform output -raw cloudfront_distribution_id
+
+          echo "Cloud Front Domain Name"
+          terraform output -raw cloudfront_domain_name
+
+          echo "====================================="
+
       # Terraform Destroy only Manual
       - name: Terraform Destroy
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'destroy'
