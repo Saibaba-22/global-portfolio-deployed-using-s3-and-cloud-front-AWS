@@ -19,13 +19,11 @@ User → CloudFront Distribution → S3 Static Website Bucket
 * Amazon S3
 * Amazon CloudFront
 * AWS IAM
-* Route 53 (Optional)
 * ACM SSL Certificate (Optional)
 
 ---
 
 # Features
-
 * Static website hosting using S3
 * Global content delivery using CloudFront
 * Faster website loading with CDN caching
