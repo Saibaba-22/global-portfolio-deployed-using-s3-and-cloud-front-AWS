@@ -49,6 +49,8 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
   })
 }
 
+
+# Github actions
 resource "null_resource" "clone_repo" {
   provisioner "local-exec" {
     command = <<EOT
@@ -61,22 +63,23 @@ EOT
 }
 
 resource "null_resource" "upload_repo" {
+
   depends_on = [
     null_resource.clone_repo,
     aws_s3_bucket.static_site
   ]
+
   provisioner "local-exec" {
+
     command = <<EOT
-aws s3 sync "portfolio-repo" s3://${aws_s3_bucket.static_site.bucket}
+aws s3 sync portfolio-repo s3://${aws_s3_bucket.static_site.bucket}
 EOT
-    interpreter = ["PowerShell", "-Command"]
+
   }
 }
 
 /*
-# if doing using github actions use this block 
-# From Github Repo
-# DOWNLOAD GITHUB REPO
+# From Local DOWNLOAD GITHUB REPO
 resource "null_resource" "clone_repo" {
   provisioner "local-exec" {
     command = <<EOT
@@ -105,4 +108,51 @@ EOT
   }
 }
 
+resource "null_resource" "upload_repo" {
+  depends_on = [
+    null_resource.clone_repo,
+    aws_s3_bucket.static_site
+  ]
+  provisioner "local-exec" {
+    command = <<EOT
+aws s3 sync "portfolio-repo" s3://${aws_s3_bucket.static_site.bucket}
+EOT
+    interpreter = ["PowerShell", "-Command"]
+  }
+}
+
 */
+
+
+
+
+
+# For Github Actions
+resource "null_resource" "clone_repo" {
+
+  provisioner "local-exec" {
+    interpreter = ["/bin/bash", "-c"]
+
+    command = <<EOT
+rm -rf portfolio-repo
+git clone ${var.github_repo_url} portfolio-repo
+EOT
+  }
+}
+
+resource "null_resource" "upload_repo" {
+
+  depends_on = [
+    null_resource.clone_repo,
+    aws_s3_bucket.static_site
+  ]
+
+  provisioner "local-exec" {
+
+    interpreter = ["/bin/bash", "-c"]
+
+    command = <<EOT
+aws s3 sync portfolio-repo s3://${aws_s3_bucket.static_site.bucket}
+EOT
+  }
+}
