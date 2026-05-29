@@ -89,15 +89,18 @@ jobs:
           echo "====================================="
           echo "🚀 DEPLOYMENT COMPLETED"
           echo "====================================="
+      
           echo "S3 Website URL:"
           terraform output -raw s3_static_website_endpoint
+          echo ""
       
-          echo "CloudFront URL:"
-          terraform output -raw cloudfront_distribution_id
-
-          echo "Cloud Front Domain Name"
+          echo "CloudFront URL (Domain):"
           terraform output -raw cloudfront_domain_name
-
+          echo ""
+      
+          echo "CloudFront Distribution ID:"
+          terraform output -raw cloudfront_distribution_id
+          echo ""
           echo "====================================="
 
       # Terraform Destroy only Manual
