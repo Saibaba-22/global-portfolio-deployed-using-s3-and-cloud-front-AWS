@@ -49,18 +49,14 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
   })
 }
 
-# if doing using github actions use this block 
-# From Github Repo
-# DOWNLOAD GITHUB REPO
 resource "null_resource" "clone_repo" {
   provisioner "local-exec" {
     command = <<EOT
-if (Test-Path "portfolio-repo") {
-    Remove-Item -Recurse -Force portfolio-repo
-}
+rm -rf portfolio-repo
 git clone ${var.github_repo_url} portfolio-repo
 EOT
-    interpreter = ["PowerShell", "-Command"]
+
+    interpreter = ["/bin/bash", "-c"]
   }
 }
 
@@ -78,6 +74,22 @@ EOT
 }
 
 /*
+# if doing using github actions use this block 
+# From Github Repo
+# DOWNLOAD GITHUB REPO
+resource "null_resource" "clone_repo" {
+  provisioner "local-exec" {
+    command = <<EOT
+if (Test-Path "portfolio-repo") {
+    Remove-Item -Recurse -Force portfolio-repo
+}
+git clone ${var.github_repo_url} portfolio-repo
+EOT
+    interpreter = ["PowerShell", "-Command"]
+  }
+}
+
+
 # If files are in local PC use this block 
 # 1st do aws configure and connect to aws account then 
 # COPY FILES TO S3 BUCKET
